@@ -28,6 +28,10 @@
     </nav>
     <div class="status">
       <span class="pill" id="pill-model" title="Provider / model">…</span>
+      <label class="version-switch" title="Chọn phiên bản artifact (system_prompt.md + tools.yaml). Đổi phiên bản sẽ mở phiên chat mới.">
+        <span>Version</span>
+        <select id="version-select" aria-label="Phiên bản artifact"></select>
+      </label>
       <span class="pill mono" id="pill-version" title="artifact_version = nhãn + hash system_prompt.md + hash tools.yaml">…</span>
       <button class="btn ghost small on-dark" id="btn-new-session" title="Bắt đầu phiên chat mới (transcript mới)">＋ Phiên mới</button>
     </div>

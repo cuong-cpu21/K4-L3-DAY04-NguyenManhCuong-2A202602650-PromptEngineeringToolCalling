@@ -71,6 +71,9 @@ a { color: var(--teal); }
 .status { margin-left: auto; display: flex; align-items: center; gap: 8px; min-width: 0; }
 .pill { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); color: #e2e8f0; border-radius: 99px; padding: 4px 11px; font-size: 12px; white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
 .pill.mono { font-size: 11.5px; color: #99f6e4; }
+.version-switch { display: flex; align-items: center; gap: 6px; background: rgba(94, 234, 212, .12); border: 1px solid rgba(94, 234, 212, .35); border-radius: 99px; padding: 2px 4px 2px 11px; font-size: 12px; color: #99f6e4; font-weight: 600; white-space: nowrap; }
+.version-switch select { background: #fff; color: var(--navy-900); border: 0; border-radius: 99px; padding: 3px 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.version-switch select:disabled { opacity: .6; cursor: not-allowed; }
 
 /* ---------------- Buttons ---------------- */
 .btn { border: 1px solid transparent; border-radius: 10px; padding: 8px 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; line-height: 1.2; transition: background .15s, border-color .15s, transform .05s; }
