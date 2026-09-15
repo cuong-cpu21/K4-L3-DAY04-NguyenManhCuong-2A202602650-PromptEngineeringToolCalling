@@ -4,7 +4,7 @@
 
 ## Thông tin bài nộp
 
-- Tên nhóm:
+- Tên nhóm: Siêu Nhân Điện Quang
 - Người đại diện / MSSV:
 - Tên repo: `K4-L3-DAY04-HoVaTen-MSSV-PromptEngineeringToolCalling`
 - URL repo, nhánh nộp, commit chốt:
@@ -14,7 +14,9 @@
 
 | Họ và tên | MSSV | GitHub | Vai trò và công việc | File/commit/PR |
 |---|---|---|---|---|
-| | | | | |
+| Trần Mạnh Tùng | 2A202602879 | Chưa điền | Thiết kế bộ group test mới | `7cad945` |
+| Nguyễn Hồng Thái | 2A202602894 | Chưa điền | Bộ group test ban đầu và UI chat/tool trace | `62c56c4`, PR #1 |
+| Nguyễn Mạnh Cường | 2A202602650 | `cuong-cpu21` | CP2 v0–v3, provider fix, chạy/đọc evidence | `15d6268`, `6452964` |
 
 ## Nhận xét chung
 

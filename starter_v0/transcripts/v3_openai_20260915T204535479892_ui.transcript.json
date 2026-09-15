@@ -1,0 +1,105 @@
+{
+  "transcript_id": "v3_openai_20260915T204535479892_ui",
+  "version": "v3",
+  "artifact_version": "v3+p106fc34a78d5+t386429f9ef89",
+  "prompt_hash": "106fc34a78d575a512ee20b33ceac73dc4312bbe0e905a16bc72ae233d4c7f54",
+  "tools_hash": "386429f9ef89bd28c54883f6424495987266ea0e6d08da41d9751ba08f47a137",
+  "provider": "openai",
+  "model": "ag/gemini-3.6-flash-medium",
+  "system_prompt": "D:\\lab vinuni\\lab pm 15.9\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "D:\\lab vinuni\\lab pm 15.9\\starter_v0\\artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "interface": "ui/server.py",
+  "created_at": "2026-09-15T20:45:35",
+  "updated_at": "2026-09-15T20:45:39",
+  "turns": [
+    {
+      "turn_id": "767c1544",
+      "turn_index": 1,
+      "started_at": "2026-09-15T20:45:35",
+      "user": "Tạo ticket critical cho DT-087: memory test báo lỗi DIMM B1.",
+      "status": "waiting_for_user",
+      "assistant_text": "Bạn có xác nhận muốn tạo ticket với thông tin sau không?\n- Mã tài sản: DT-087\n- Mức độ ưu tiên: critical\n- Tóm tắt: Memory test báo lỗi DIMM B1",
+      "artifact_version": "v3+p106fc34a78d5+t386429f9ef89",
+      "provider": "openai",
+      "model": "ag/gemini-3.6-flash-medium",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "clarify",
+              "args": {
+                "question": "Bạn có xác nhận muốn tạo ticket với thông tin sau không?\n- Mã tài sản: DT-087\n- Mức độ ưu tiên: critical\n- Tóm tắt: Memory test báo lỗi DIMM B1",
+                "response_type": "yes_no"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "clarify",
+              "args": {
+                "question": "Bạn có xác nhận muốn tạo ticket với thông tin sau không?\n- Mã tài sản: DT-087\n- Mức độ ưu tiên: critical\n- Tóm tắt: Memory test báo lỗi DIMM B1",
+                "response_type": "yes_no"
+              },
+              "result": {
+                "tool": "clarify",
+                "question": "Bạn có xác nhận muốn tạo ticket với thông tin sau không?\n- Mã tài sản: DT-087\n- Mức độ ưu tiên: critical\n- Tóm tắt: Memory test báo lỗi DIMM B1",
+                "response_type": "yes_no",
+                "options": [],
+                "awaiting_user": true
+              },
+              "status": "awaiting_user",
+              "round": 1,
+              "duration_ms": 0.0
+            }
+          ]
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có xác nhận muốn tạo ticket với thông tin sau không?\n- Mã tài sản: DT-087\n- Mức độ ưu tiên: critical\n- Tóm tắt: Memory test báo lỗi DIMM B1",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "clarify",
+            "question": "Bạn có xác nhận muốn tạo ticket với thông tin sau không?\n- Mã tài sản: DT-087\n- Mức độ ưu tiên: critical\n- Tóm tắt: Memory test báo lỗi DIMM B1",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          },
+          "status": "awaiting_user",
+          "round": 1,
+          "duration_ms": 0.0
+        }
+      ],
+      "timing": [
+        {
+          "kind": "llm",
+          "round": 1,
+          "start_ms": 0.2,
+          "end_ms": 3829.0
+        },
+        {
+          "kind": "tool",
+          "round": 1,
+          "index": 0,
+          "tool": "clarify",
+          "start_ms": 3829.2,
+          "end_ms": 3829.2
+        }
+      ],
+      "clarify": {
+        "response_type": "yes_no",
+        "options": []
+      },
+      "ended_at": "2026-09-15T20:45:39",
+      "total_ms": 3829.3
+    }
+  ],
+  "ui_tool_calls": []
+}

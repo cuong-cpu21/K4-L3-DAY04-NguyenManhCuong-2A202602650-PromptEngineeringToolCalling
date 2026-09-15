@@ -7,7 +7,7 @@ Web chat cho IT Helpdesk agent. Chỉ dùng thư viện chuẩn Python và code 
 Trong `starter_v0/`, sau khi đã cài `requirements.txt` và điền `.env`:
 
 ```powershell
-python ui/server.py --provider openai --model ag/gemini-3.6-flash-medium --version v0
+python ui/server.py --provider openai --model ag/gemini-3.6-flash-medium --version v3
 ```
 
 Mở http://127.0.0.1:8800. Đổi cổng bằng `--port`. Các tham số khác giống `chat.py`: `--system-prompt`, `--tools`, `--history-window`, `--max-tool-rounds`, `--transcripts-dir`.
