@@ -77,6 +77,8 @@ python run_eval.py --provider openrouter --version v0 --suite base --eval-cases 
 
 Thay `openrouter` bằng `openai`, `anthropic` hoặc `gemini` khi dùng provider khác. Không commit `.env`.
 
+Chạy UI chat (tool call, input, kết quả/lỗi, version, trace): `python ui/server.py --provider <provider> --model <model> --version <vN>` rồi mở http://127.0.0.1:8800. Chi tiết ở [starter_v0/ui/README.md](starter_v0/ui/README.md).
+
 ## Tài liệu cần đọc
 
 | File | Dùng khi |
