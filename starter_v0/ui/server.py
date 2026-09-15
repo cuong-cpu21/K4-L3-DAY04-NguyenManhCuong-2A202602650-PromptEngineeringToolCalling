@@ -49,6 +49,8 @@ from tools.policy.tool import POLICY_DIR, _parse_markdown_doc  # noqa: E402
 from tools.search_kb.tool import KB_DIR, _load_doc  # noqa: E402
 from versioning import artifact_version_dict, build_artifact_version  # noqa: E402
 
+VERSIONS_DIR = ROOT / "artifacts" / "versions"
+WORKING_VERSION = "working"  # startup artifacts when --version has no snapshot folder (e.g. a new v4)
 DATA_DIR = ROOT / "helpdesk_data"
 TICKET_DIR = ROOT / "tickets"
 UI_TOOLS = set(TOOL_FUNCTIONS) - {"clarify"}  # tools the dashboard may call directly
@@ -76,6 +78,54 @@ def load_artifacts() -> dict[str, Any]:
         "declarations": declarations,
         "openai_tools": to_openai_tools(declarations),
         "version": version,
+    }
+
+
+def snapshot_versions() -> list[dict[str, Any]]:
+    versions = []
+    if VERSIONS_DIR.is_dir():
+        for folder in sorted(VERSIONS_DIR.iterdir(), key=lambda p: p.name):
+            prompt, tools = folder / "system_prompt.md", folder / "tools.yaml"
+            if prompt.is_file() and tools.is_file():
+                versions.append({"id": folder.name, "label": folder.name, "system_prompt": prompt, "tools": tools})
+    return versions
+
+
+def list_versions() -> list[dict[str, Any]]:
+    """Snapshots in artifacts/versions/<vN>/. The startup artifacts are listed only when no snapshot has that label."""
+    versions = snapshot_versions()
+    startup = CONFIG["startup"]
+    if not CONFIG["startup_is_snapshot"]:
+        clash = any(v["id"] == startup["version"] for v in versions)
+        label = f"{startup['version']} · custom" if clash else startup["version"]
+        versions.append({"id": WORKING_VERSION, "label": label, "version": startup["version"],
+                         "system_prompt": startup["system_prompt"], "tools": startup["tools"]})
+    return versions
+
+
+def switch_version(version_id: str) -> bool:
+    target = next((v for v in list_versions() if v["id"] == version_id), None)
+    if target is None:
+        return False
+    with LOCK:
+        CONFIG.update({"version_id": target["id"], "version": target.get("version", target["id"]),
+                       "system_prompt": target["system_prompt"], "tools": target["tools"]})
+    return True
+
+
+def info_payload() -> dict[str, Any]:
+    artifacts = load_artifacts()
+    return {
+        "provider": CONFIG["provider"],
+        "model": CONFIG["model"],
+        "version": CONFIG["version"],
+        "version_id": CONFIG["version_id"],
+        "versions": [{"id": v["id"], "label": v["label"]} for v in list_versions()],
+        "artifact_version": artifacts["version"].artifact_version,
+        "history_window": CONFIG["history_window"],
+        "max_tool_rounds": CONFIG["max_tool_rounds"],
+        "tools": [{"name": d["name"], "description": d.get("description", ""),
+                   "implemented": d["name"] in TOOL_FUNCTIONS} for d in artifacts["declarations"]],
     }
 
 
@@ -337,17 +387,7 @@ class Handler(BaseHTTPRequestHandler):
         if url.path.startswith("/static/"):
             return self._static(url.path[len("/static/"):])
         if url.path == "/api/info":
-            artifacts = load_artifacts()
-            return self._json({
-                "provider": CONFIG["provider"],
-                "model": CONFIG["model"],
-                "version": CONFIG["version"],
-                "artifact_version": artifacts["version"].artifact_version,
-                "history_window": CONFIG["history_window"],
-                "max_tool_rounds": CONFIG["max_tool_rounds"],
-                "tools": [{"name": d["name"], "description": d.get("description", ""),
-                           "implemented": d["name"] in TOOL_FUNCTIONS} for d in artifacts["declarations"]],
-            })
+            return self._json(info_payload())
         if url.path == "/api/data":
             return self._json(dashboard_data())
         if url.path == "/api/session":
@@ -372,6 +412,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": "invalid_json"}, HTTPStatus.BAD_REQUEST)
         session_id = str(body.get("session_id") or uuid.uuid4().hex)
 
+        if path == "/api/version":
+            # Applies to new sessions; the UI opens a new session after switching.
+            if not switch_version(str(body.get("version_id", ""))):
+                return self._json({"error": "unknown_version"}, HTTPStatus.BAD_REQUEST)
+            return self._json(info_payload())
         if path == "/api/chat":
             message = str(body.get("message", "")).strip()
             if not message:
@@ -424,13 +469,20 @@ def main() -> None:
         "model": args.model or getattr(PROVIDER, "default_model", None),
         "model_arg": args.model,
         "version": args.version,
+        "version_id": WORKING_VERSION,
         "system_prompt": args.system_prompt.resolve(),
         "tools": args.tools.resolve(),
+        "startup": {"version": args.version, "system_prompt": args.system_prompt.resolve(), "tools": args.tools.resolve()},
         "transcripts_dir": args.transcripts_dir.resolve(),
         "history_window": args.history_window,
         "max_tool_rounds": args.max_tool_rounds,
+        "startup_is_snapshot": False,
     })
-    server = ThreadingHTTPServer((args.host, args.port), Handler)
+    # --version vN with the default artifact paths runs the saved snapshot artifacts/versions/vN/.
+    default_paths = parser.get_default("system_prompt").resolve(), parser.get_default("tools").resolve()
+    if (CONFIG["system_prompt"], CONFIG["tools"]) == default_paths and switch_version(args.version):
+        CONFIG["startup_is_snapshot"] = True
+    server =ThreadingHTTPServer((args.host, args.port), Handler)
     server.daemon_threads = True
     print(f"Northstar Helpdesk UI  provider={args.provider} model={CONFIG['model']}")
     print(f"artifact_version={load_artifacts()['version'].artifact_version}")

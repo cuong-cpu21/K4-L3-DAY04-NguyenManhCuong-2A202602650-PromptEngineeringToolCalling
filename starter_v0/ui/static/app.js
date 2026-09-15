@@ -992,6 +992,47 @@
   function renderInfo() {
     $("#pill-model").textContent = `${state.info.provider} · ${state.info.model}`;
     $("#pill-version").textContent = state.info.artifact_version;
+    const select = $("#version-select");
+    select.replaceChildren(...(state.info.versions || []).map((v) => el("option", { value: v.id }, esc(v.label))));
+    select.value = state.info.version_id;
+  }
+
+  function startNewSession() {
+    state.sessionId = newId();
+    store.set("northstar.session", state.sessionId);
+    Object.assign(state, { turns: [], uiCalls: [], live: null, selected: null });
+    state.touchedAssets.clear();
+    state.touchedServices.clear();
+    resetChatLog();
+    updateTraceCount();
+    renderKpis();
+    renderDash();
+    if (state.tab === "trace") renderTrace();
+  }
+
+  async function switchVersion(select) {
+    const target = select.value;
+    const label = select.selectedOptions[0]?.textContent || target;
+    const hasActivity = state.turns.length || state.uiCalls.length;
+    if (state.busy) { toast("Đợi lượt hiện tại chạy xong rồi đổi phiên bản"); select.value = state.info.version_id; return; }
+    if (hasActivity && !confirm(`Chuyển sang ${label}? Phiên chat mới sẽ được mở, hội thoại hiện tại vẫn nằm trong transcript cũ.`)) {
+      select.value = state.info.version_id;
+      return;
+    }
+    select.disabled = true;
+    try {
+      const info = await api.post("/api/version", { version_id: target });
+      if (info.error) throw new Error(info.error);
+      state.info = info;
+      renderInfo();
+      startNewSession();
+      toast(`Đang dùng ${esc(label)}`, "ok");
+    } catch (err) {
+      select.value = state.info.version_id;
+      toast(`Không đổi được phiên bản: ${esc(err.message)}`, "error");
+    } finally {
+      select.disabled = false;
+    }
   }
 
   function resetChatLog() {
@@ -1013,18 +1054,10 @@
     $("#btn-new-session").addEventListener("click", () => {
       if (state.busy) return;
       if ((state.turns.length || state.uiCalls.length) && !confirm("Bắt đầu phiên mới? Hội thoại hiện tại vẫn được lưu trong transcript cũ.")) return;
-      state.sessionId = newId();
-      store.set("northstar.session", state.sessionId);
-      Object.assign(state, { turns: [], uiCalls: [], live: null, selected: null });
-      state.touchedAssets.clear();
-      state.touchedServices.clear();
-      resetChatLog();
-      updateTraceCount();
-      renderKpis();
-      renderDash();
-      if (state.tab === "trace") renderTrace();
+      startNewSession();
       toast("Đã mở phiên mới", "ok");
     });
+    $("#version-select").addEventListener("change", (ev) => switchVersion(ev.target));
     window.addEventListener("hashchange", () => setTab(location.hash.slice(1)));
 
     renderSuggestions();
