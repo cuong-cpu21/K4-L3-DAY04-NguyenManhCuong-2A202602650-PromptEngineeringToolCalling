@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Northstar Helpdesk · IT Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/app.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M24 5 28.5 19.5 43 24 28.5 28.5 24 43 19.5 28.5 5 24 19.5 19.5Z" fill="#5eead4" />
+        <circle cx="24" cy="24" r="4.5" fill="#0b1324" />
+      </svg>
+      <div>
+        <div class="brand-name">Northstar Helpdesk</div>
+        <div class="brand-sub">IT Service Desk Agent · Prompt Engineering &amp; Tool Calling</div>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <a href="#desk" class="tab is-active" data-tab="desk">Trợ lý &amp; Bảng điều khiển</a>
+      <a href="#trace" class="tab" data-tab="trace">Trace &amp; Lịch sử tool <span class="tab-count" id="trace-count">0</span></a>
+    </nav>
+    <div class="status">
+      <span class="pill" id="pill-model" title="Provider / model">…</span>
+      <span class="pill mono" id="pill-version" title="artifact_version = nhãn + hash system_prompt.md + hash tools.yaml">…</span>
+      <button class="btn ghost small on-dark" id="btn-new-session" title="Bắt đầu phiên chat mới (transcript mới)">＋ Phiên mới</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= DESK ================= -->
+    <section id="view-desk" class="view desk-view">
+      <aside class="panel chat">
+        <div class="chat-head">
+          <div class="avatar">🛰️</div>
+          <div class="chat-head-text">
+            <div class="chat-title">Trợ lý IT Northstar</div>
+            <div class="chat-sub">Kiểm tra dịch vụ, thiết bị, tài khoản · tìm hướng dẫn · tạo ticket</div>
+          </div>
+          <a class="btn ghost small" id="btn-transcript" title="Tải transcript JSON của phiên">⬇ Transcript</a>
+        </div>
+        <div class="chat-log" id="chat-log" aria-live="polite">
+          <div class="msg bot intro">
+            <div class="bubble">
+              Xin chào 👋 Mình là trợ lý IT của <b>Northstar Labs</b>. Mỗi yêu cầu sẽ hiện <b>tool agent gọi</b>, <b>input</b> và <b>kết quả</b> ngay dưới câu trả lời;
+              dữ liệu tool trả về cũng được vẽ thành thẻ trực quan. Bạn cũng có thể thao tác trực tiếp ở bảng điều khiển bên cạnh.
+            </div>
+          </div>
+        </div>
+        <div class="suggestions" id="suggestions"></div>
+        <form class="composer" id="composer">
+          <textarea id="chat-input" rows="1" placeholder="Nhắn cho trợ lý… (Enter để gửi, Shift+Enter xuống dòng)" autocomplete="off"></textarea>
+          <button class="btn primary" id="chat-send" type="submit" aria-label="Gửi">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M3 11.5 21 3l-8.5 18-2.2-7.3L3 11.5Z" fill="currentColor"/></svg>
+          </button>
+        </form>
+      </aside>
+
+      <div class="dash">
+        <div class="panel dash-head">
+          <div class="kpis" id="kpis"></div>
+          <nav class="seg" id="dash-tabs">
+            <button data-dash="services" class="is-active">Dịch vụ</button>
+            <button data-dash="devices">Thiết bị</button>
+            <button data-dash="users">Nhân viên</button>
+            <button data-dash="tickets">Ticket</button>
+            <button data-dash="knowledge">Hướng dẫn &amp; Policy</button>
+          </nav>
+        </div>
+        <div class="dash-body" id="dash-body"></div>
+      </div>
+    </section>
+
+    <!-- ================= TRACE ================= -->
+    <section id="view-trace" class="view trace-view" hidden>
+      <aside class="panel turn-list-panel">
+        <div class="seg small" id="trace-mode">
+          <button data-mode="turns" class="is-active">Lượt hội thoại</button>
+          <button data-mode="log">Tất cả tool call</button>
+        </div>
+        <ol class="turn-list" id="turn-list"></ol>
+      </aside>
+      <div class="trace-main" id="trace-main"></div>
+    </section>
+  </main>
+
+  <!-- drawer for device / service / user detail -->
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <aside class="drawer" id="drawer" hidden aria-modal="true" role="dialog">
+    <button class="drawer-close" id="drawer-close" aria-label="Đóng">✕</button>
+    <div id="drawer-body"></div>
+  </aside>
+
+  <dialog class="dialog" id="ticket-dialog">
+    <form method="dialog" id="ticket-confirm-form">
+      <h3>Xác nhận tạo ticket</h3>
+      <p class="muted">Đây là hành động ghi dữ liệu. Kiểm tra payload trước khi gửi tới tool <code>create_ticket</code>.</p>
+      <pre class="json" id="ticket-payload"></pre>
+      <div class="dialog-actions">
+        <button class="btn ghost" value="cancel">Quay lại</button>
+        <button class="btn primary" value="confirm">Xác nhận tạo</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toasts" id="toasts"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

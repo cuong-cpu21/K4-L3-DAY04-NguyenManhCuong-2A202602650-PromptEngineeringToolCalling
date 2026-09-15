@@ -79,6 +79,8 @@ Thay `openrouter` bằng `openai`, `anthropic` hoặc `gemini` khi dùng provide
 Nếu provider giới hạn request/phút, thêm `--request-delay 5` (hoặc khoảng chờ
 phù hợp với quota) để tránh biến lỗi rate limit thành lỗi agent.
 
+Chạy UI chat (tool call, input, kết quả/lỗi, version, trace): `python ui/server.py --provider <provider> --model <model> --version <vN>` rồi mở http://127.0.0.1:8800. Chi tiết ở [starter_v0/ui/README.md](starter_v0/ui/README.md).
+
 ## Tài liệu cần đọc
 
 | File | Dùng khi |
