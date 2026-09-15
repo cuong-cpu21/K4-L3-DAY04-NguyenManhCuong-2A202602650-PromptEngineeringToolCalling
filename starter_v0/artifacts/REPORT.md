@@ -53,13 +53,13 @@ total_cases`, và tool result error đã được review thủ công.
 | v0 | Baseline, chưa sửa prompt/tool | Đo hành vi ban đầu để xác định lỗi routing, arguments, thiếu thông tin và xác nhận | case_accuracy |  | 0.7000 | `runs/v0_B_base_gemini_20260915T184355568235.json` |
 | v1 | Thêm decision policy vào `system_prompt.md` | Quy tắc latest intent, correction, missing information và confirmation rõ ràng sẽ cải thiện routing nhiều lượt | case_accuracy | 0.7000 | 0.7333 | `runs/v1_B_base_gemini_20260915T185037237854.json` |
 | v2 | Làm rõ contract trong `tools.yaml` | Mô tả purpose, argument mapping và confirmation theo từng tool sẽ giảm missing call và sai argument | case_accuracy | 0.7333 | 1.0000 | `runs/v2_B_base_gemini_20260915T185525148594.json` |
-| v3 | Thêm safety guardrail và bắt buộc điền argument suy ra được trong `system_prompt.md` | Tăng khả năng chống injection/rò rỉ mà không làm giảm đáng kể chất lượng base | case_accuracy | 1.0000 | 0.9667 | `runs/v3_B_base_gemini_20260915T191046657229.json` |
+| v3 | Thêm safety guardrail và bắt buộc điền argument suy ra được trong `system_prompt.md` | Tăng khả năng chống injection/rò rỉ mà không làm giảm chất lượng base | case_accuracy | 1.0000 | 1.0000 | `runs/v3_B_base_gemini_20260915T195526583674.json` |
 
 Mọi run trong bảng đều có `measured_cases=30` và `provider_error_cases=0`.
-Run thử `v3` đầu tiên đạt 28/30 tại
-`analysis/trial-runs/v3_B_base_gemini_20260915T185942734635.json`; sau khi bổ sung quy tắc
-argument/confirmation tổng quát, run chốt đạt 29/30. Kết quả `v2=30/30` và
-`v3=29/30` cho thấy output model vẫn có biến thiên dù temperature bằng 0.
+Hai run thử `v3` đạt 28/30 và 29/30 vì Gemini adapter nhận
+`tool_choice="required"` nhưng chưa truyền chế độ bắt buộc vào SDK. Sau khi map
+`required` sang Gemini `FunctionCallingConfig(mode="ANY")`, run chốt đạt
+30/30. Các run trước fix được giữ trong `analysis/trial-runs/`.
 
 ## B2. Failure analysis
 
@@ -74,7 +74,7 @@ argument/confirmation tổng quát, run chốt đạt 29/30. Kết quả `v2=30/
 | H19_ambiguous_environment | missing_info | `check_service_status(environment=staging)` | Tự đoán environment thay vì hỏi lại | Cấm tự đoán enum còn mơ hồ |
 | M09_confirmation_invalidated | wrong_boundary | `policy(query=payload)` | Thay đổi payload nhưng không yêu cầu xác nhận lại | Mọi thay đổi action payload phải vô hiệu xác nhận cũ |
 | M10_latest_intent_wins | wrong_tool | Không gọi `lookup_user` | Không ưu tiên intent mới nhất | Thêm quy tắc hủy intent cũ khi người dùng chuyển yêu cầu |
-| H06_environment_arg (v3) | wrong_arg_value | Không gọi tool | Run v2 pass nhưng run v3 chốt bỏ call dù input rõ | Giữ evidence regression; cần repeated runs trước khi kết luận độ ổn định |
+| H06_environment_arg (v3 trial) | wrong_arg_value | Trả JSON text thay vì structured call | Gemini adapter bỏ qua `tool_choice="required"` | Map `required` sang `FunctionCallingConfig(mode="ANY")`; run chốt pass |
 
 ## B3. Team eval cases
 
@@ -127,8 +127,8 @@ nhóm tự xây.
 - `tools.yaml`: purpose của từng tool, mapping intent sang arguments, quy ước
   `clarify` và điều kiện gọi `create_ticket`.
 - Automatic score không chứng minh action đã thành công hoặc không rò rỉ dữ
-  liệu; phải đọc `tool_results`, lỗi tool và filesystem. Chênh lệch v2/v3 cũng
-  cho thấy một run đơn lẻ không chứng minh độ ổn định tuyệt đối.
+  liệu; phải đọc `tool_results`, lỗi tool và filesystem. Các run v3 trước fix
+  cũng cho thấy cần phân biệt text mô tả tool với structured tool call thật.
 - Vòng tiếp theo nên chạy repeated evaluation và adversarial suite với cùng
   artifact v3 để đo variance và kiểm tra guardrail, không tiếp tục tối ưu theo
   một base case riêng lẻ.

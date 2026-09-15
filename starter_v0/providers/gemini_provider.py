@@ -66,6 +66,17 @@ def _function_call_args(call: Any) -> dict[str, Any]:
     return {}
 
 
+def _function_calling_mode(tool_choice: Any | None) -> str | None:
+    """Translate the shared provider choice into Gemini's calling mode."""
+    if not isinstance(tool_choice, str):
+        return None
+    return {
+        "required": "ANY",
+        "auto": "AUTO",
+        "none": "NONE",
+    }.get(tool_choice)
+
+
 class GeminiProvider:
     """Google Gemini API provider with normalized tool_calls output."""
 
@@ -104,6 +115,11 @@ class GeminiProvider:
             config_kwargs["system_instruction"] = system_instruction
         if declarations:
             config_kwargs["tools"] = [types.Tool(function_declarations=declarations)]
+            calling_mode = _function_calling_mode(tool_choice)
+            if calling_mode:
+                config_kwargs["tool_config"] = types.ToolConfig(
+                    function_calling_config=types.FunctionCallingConfig(mode=calling_mode)
+                )
 
         client = genai.Client(api_key=api_key)
         resp = client.models.generate_content(
