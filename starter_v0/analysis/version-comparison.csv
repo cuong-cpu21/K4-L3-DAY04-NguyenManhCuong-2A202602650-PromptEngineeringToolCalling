@@ -1,0 +1,5 @@
+version,artifact_version,total_cases,measured_cases,provider_error_cases,passed_cases,case_accuracy,tool_routing_accuracy,argument_accuracy,multiturn_accuracy,run_file
+v0,v0+p27467914bc4d+td4848549884e,30,30,0,21,0.7000,0.7333,0.7000,0.5000,runs/v0_B_base_gemini_20260915T184355568235.json
+v1,v1+p938dfc650c78+td4848549884e,30,30,0,22,0.7333,0.8000,0.7333,0.7000,runs/v1_B_base_gemini_20260915T185037237854.json
+v2,v2+p938dfc650c78+t386429f9ef89,30,30,0,30,1.0000,1.0000,1.0000,1.0000,runs/v2_B_base_gemini_20260915T185525148594.json
+v3,v3+p67f93bb55e71+t386429f9ef89,30,30,0,29,0.9667,0.9667,0.9667,1.0000,runs/v3_B_base_gemini_20260915T191046657229.json

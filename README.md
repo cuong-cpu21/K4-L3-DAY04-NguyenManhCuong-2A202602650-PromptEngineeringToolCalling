@@ -76,6 +76,8 @@ python run_eval.py --provider openrouter --version v0 --suite base --eval-cases 
 ```
 
 Thay `openrouter` bằng `openai`, `anthropic` hoặc `gemini` khi dùng provider khác. Không commit `.env`.
+Nếu provider giới hạn request/phút, thêm `--request-delay 5` (hoặc khoảng chờ
+phù hợp với quota) để tránh biến lỗi rate limit thành lỗi agent.
 
 ## Tài liệu cần đọc
 

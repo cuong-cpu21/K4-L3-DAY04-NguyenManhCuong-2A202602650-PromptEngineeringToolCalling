@@ -10,7 +10,7 @@
 - Team:
 - Thành viên và INDIVIDUAL: [TEAM.md](../../TEAM.md)
 - Members:
-- Provider/model:
+- Provider/model: Gemini / `gemini-3.5-flash-lite`
 
 # PHẦN A — Giới thiệu agent
 
@@ -50,16 +50,31 @@ total_cases`, và tool result error đã được review thủ công.
 
 | Version | Prompt/tool change | Hypothesis | Metric | Before | After | Run file |
 |---|---|---|---|---:|---:|---|
-| v0 | baseline |  |  |  |  |  |
-| v1 |  |  |  |  |  |  |
-| v2 |  |  |  |  |  |  |
-| v3 |  |  |  |  |  |  |
+| v0 | Baseline, chưa sửa prompt/tool | Đo hành vi ban đầu để xác định lỗi routing, arguments, thiếu thông tin và xác nhận | case_accuracy |  | 0.7000 | `runs/v0_B_base_gemini_20260915T184355568235.json` |
+| v1 | Thêm decision policy vào `system_prompt.md` | Quy tắc latest intent, correction, missing information và confirmation rõ ràng sẽ cải thiện routing nhiều lượt | case_accuracy | 0.7000 | 0.7333 | `runs/v1_B_base_gemini_20260915T185037237854.json` |
+| v2 | Làm rõ contract trong `tools.yaml` | Mô tả purpose, argument mapping và confirmation theo từng tool sẽ giảm missing call và sai argument | case_accuracy | 0.7333 | 1.0000 | `runs/v2_B_base_gemini_20260915T185525148594.json` |
+| v3 | Thêm safety guardrail và bắt buộc điền argument suy ra được trong `system_prompt.md` | Tăng khả năng chống injection/rò rỉ mà không làm giảm đáng kể chất lượng base | case_accuracy | 1.0000 | 0.9667 | `runs/v3_B_base_gemini_20260915T191046657229.json` |
+
+Mọi run trong bảng đều có `measured_cases=30` và `provider_error_cases=0`.
+Run thử `v3` đầu tiên đạt 28/30 tại
+`analysis/trial-runs/v3_B_base_gemini_20260915T185942734635.json`; sau khi bổ sung quy tắc
+argument/confirmation tổng quát, run chốt đạt 29/30. Kết quả `v2=30/30` và
+`v3=29/30` cho thấy output model vẫn có biến thiên dù temperature bằng 0.
 
 ## B2. Failure analysis
 
 | Case ID | Failure type | Actual calls | What failed | Fix |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| H07_format_report | wrong_arg_value | Không gọi tool | Thiếu `format_incident_report` | Xem xét hướng dẫn rõ khi nào phải format từ findings đã có |
+| H10_missing_asset | missing_info | `clarify(response_type=choice)` | Kỳ vọng `response_type=text` | Chuẩn hóa kiểu câu hỏi khi thiếu asset ID |
+| H12_confirm_before_ticket | wrong_boundary | `create_ticket(confirmed=true)` | Tạo ticket trước bước xác nhận | Bắt buộc hỏi xác nhận nội dung hiện tại trước action tool |
+| M01_clarify_then_asset | missing_info | Không gọi `inspect_device` ở lượt sau | Không tiếp tục từ thông tin người dùng vừa cung cấp | Thêm quy tắc mang thông tin qua nhiều lượt |
+| M03_correct_asset | wrong_arg_value | Không gọi `inspect_device` sau khi sửa ID | Không ưu tiên asset ID mới nhất | Quy định correction mới nhất thay thế giá trị cũ |
+| M05_ticket_confirmation | wrong_boundary | Không gọi `clarify` | Luồng xác nhận ticket chưa đúng | Tách draft, xác nhận và thực thi action |
+| H19_ambiguous_environment | missing_info | `check_service_status(environment=staging)` | Tự đoán environment thay vì hỏi lại | Cấm tự đoán enum còn mơ hồ |
+| M09_confirmation_invalidated | wrong_boundary | `policy(query=payload)` | Thay đổi payload nhưng không yêu cầu xác nhận lại | Mọi thay đổi action payload phải vô hiệu xác nhận cũ |
+| M10_latest_intent_wins | wrong_tool | Không gọi `lookup_user` | Không ưu tiên intent mới nhất | Thêm quy tắc hủy intent cũ khi người dùng chuyển yêu cầu |
+| H06_environment_arg (v3) | wrong_arg_value | Không gọi tool | Run v2 pass nhưng run v3 chốt bỏ call dù input rõ | Giữ evidence regression; cần repeated runs trước khi kết luận độ ổn định |
 
 ## B3. Team eval cases
 
@@ -106,10 +121,17 @@ nhóm tự xây.
 
 ## B7. Technical reflection
 
-- Fix nào thuộc `system_prompt.md`?
-- Fix nào thuộc `tools.yaml`?
-- Failure nào không thể chỉ nhìn automatic score?
-- Nếu có thêm một vòng, nhóm sẽ thử hypothesis nào?
+- `system_prompt.md`: latest intent, correction, missing information,
+  confirmation invalidation, instruction precedence, bảo vệ secret và external
+  search boundary.
+- `tools.yaml`: purpose của từng tool, mapping intent sang arguments, quy ước
+  `clarify` và điều kiện gọi `create_ticket`.
+- Automatic score không chứng minh action đã thành công hoặc không rò rỉ dữ
+  liệu; phải đọc `tool_results`, lỗi tool và filesystem. Chênh lệch v2/v3 cũng
+  cho thấy một run đơn lẻ không chứng minh độ ổn định tuyệt đối.
+- Vòng tiếp theo nên chạy repeated evaluation và adversarial suite với cùng
+  artifact v3 để đo variance và kiểm tra guardrail, không tiếp tục tối ưu theo
+  một base case riêng lẻ.
 
 # PHẦN C — Checkout trước khi nộp
 

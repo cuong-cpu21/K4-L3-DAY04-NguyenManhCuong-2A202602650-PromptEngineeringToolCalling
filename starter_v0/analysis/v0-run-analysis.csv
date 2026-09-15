@@ -1,0 +1,31 @@
+run_id,version,artifact_version,suite,case_id,is_multiturn,case_failure_type,observed_mismatch,expected_tool,actual_tool,passed,routing_correct,args_correct,failures
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H01_service_status_routing,False,wrong_tool,,check_service_status,check_service_status,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H02_device_routing,False,wrong_tool,,inspect_device,inspect_device,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H03_kb_routing,False,wrong_tool,,search_kb,search_kb,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H04_user_routing,False,wrong_tool,,lookup_user,lookup_user,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H05_device_check_arg,False,wrong_arg_value,,inspect_device,inspect_device,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H06_environment_arg,False,wrong_arg_value,,check_service_status,check_service_status,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H07_format_report,False,wrong_arg_value,missing_tool_call,format_incident_report,,False,False,False,missing tool call format_incident_report
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H08_out_of_scope,False,out_of_scope,,no_tool,,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H09_meta_no_tool,False,unnecessary_tool,,no_tool,,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H10_missing_asset,False,missing_info,wrong_arg_value,clarify,clarify,False,True,False,"response_type: expected 'text', got 'choice'"
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H11_missing_employee,False,missing_info,,clarify,clarify,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H12_confirm_before_ticket,False,wrong_boundary,missing_tool_call,clarify,create_ticket,False,False,False,missing tool call clarify; extra tool call create_ticket
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H13_parallel_status_and_device,False,wrong_tool,,check_service_status|inspect_device,check_service_status|inspect_device,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H14_out_of_scope_coding,False,out_of_scope,,no_tool,,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M01_clarify_then_asset,True,missing_info,missing_tool_call,inspect_device,,False,False,False,missing tool call inspect_device
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M02_carry_environment,True,wrong_arg_value,,check_service_status,check_service_status,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M03_correct_asset,True,wrong_arg_value,missing_tool_call,inspect_device,,False,False,False,missing tool call inspect_device
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M04_correct_employee,True,wrong_arg_value,,lookup_user,lookup_user,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M05_ticket_confirmation,True,wrong_boundary,missing_tool_call,clarify,,False,False,False,missing tool call clarify
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M06_switch_tool,True,wrong_tool,,search_kb,search_kb,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H15_compare_environments,False,wrong_tool,,check_service_status|check_service_status,check_service_status|check_service_status,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H16_compare_two_assets,False,wrong_tool,,inspect_device|inspect_device,inspect_device|inspect_device,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H17_triage_with_three_sources,False,wrong_tool,,inspect_device|check_service_status|search_kb,inspect_device|check_service_status|search_kb,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H18_user_and_asset,False,wrong_tool,,lookup_user|inspect_device,lookup_user|inspect_device,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H19_ambiguous_environment,False,missing_info,missing_tool_call,clarify,check_service_status,False,False,False,missing tool call clarify; extra tool call check_service_status
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,H20_format_without_refetch,False,unnecessary_tool,,format_incident_report,format_incident_report,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M07_cancel_previous_action,True,unnecessary_tool,,no_tool,,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M08_correct_then_parallel,True,wrong_arg_value,,inspect_device|check_service_status,inspect_device|check_service_status,True,True,True,
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M09_confirmation_invalidated,True,wrong_boundary,missing_tool_call,clarify,policy,False,False,False,missing tool call clarify; extra tool call policy
+v0_B_base_gemini_20260915T184355568235,v0,v0+p27467914bc4d+td4848549884e,base,M10_latest_intent_wins,True,wrong_tool,missing_tool_call,lookup_user,,False,False,False,missing tool call lookup_user
