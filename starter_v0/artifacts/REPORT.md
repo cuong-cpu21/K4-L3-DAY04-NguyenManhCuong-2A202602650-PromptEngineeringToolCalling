@@ -18,9 +18,7 @@
 
 Agent định tuyến yêu cầu IT Helpdesk tới công cụ kiểm tra dịch vụ, thiết bị, tài khoản, KB/chính sách, định dạng báo cáo và tạo ticket có xác nhận. Agent chỉ dùng dữ liệu giả lập; tìm kiếm web chỉ nhận hãng/model công khai và không được gửi mã tài sản, mã nhân viên hay dữ liệu nội bộ.
 
-**Link dùng thử:**
-
-> URL:
+**Link dùng thử:** chạy local theo `python ui/server.py --provider openai --model ag/gemini-3.6-flash-medium --version v3`, sau đó mở http://127.0.0.1:8800. Nhóm chưa deploy URL công khai.
 
 ## A2. Tool agent có
 
@@ -169,13 +167,13 @@ commit evidence của bất kỳ thành viên nào còn thiếu.
 
 Hoàn thành mục nhận xét chung trong [TEAM.md](../../TEAM.md). Dẫn tới các run, file và commit trong phần B để chứng minh kết quả. Ghi dưới đây đường dẫn tới mục đã hoàn thành:
 
-> Link:
+> [TEAM.md — Nhận xét chung](../../TEAM.md#nhận-xét-chung)
 
 ## C2. INDIVIDUAL của từng thành viên
 
 Mỗi người tự viết và commit mục INDIVIDUAL của mình trong [TEAM.md](../../TEAM.md), nêu phần việc, bằng chứng kỹ thuật và điều đã học. Không yêu cầu chép lại cùng nội dung ở đây. Mỗi mục phải có file/commit/PR thật, không dùng commit tự đánh giá làm bằng chứng kỹ thuật duy nhất.
 
-> Link các mục INDIVIDUAL:
+> [Nguyễn Hồng Thái](../../TEAM.md#nguyễn-hồng-thái--2a202602894) · [Nguyễn Mạnh Cường](../../TEAM.md#nguyễn-mạnh-cường--2a202602650) · [Trần Mạnh Tùng](../../TEAM.md#trần-mạnh-tùng--2a202602879) (Tùng còn phải tự hoàn thiện reflection)
 
 ## C3. Final checkout
 
@@ -194,7 +192,7 @@ repository chung:
 
 **URL repository chung dùng để nộp:**
 
-> URL:
+> https://github.com/cuong-cpu21/K4-L3-DAY04-sieunhandienquang-PromptEngineeringToolCalling
 
 - [ ] Tên repo đúng mẫu K4-L3-DAY04-HoVaTen-MSSV-PromptEngineeringToolCalling.
 - [ ] Kiểm tra deadline và bản chốt theo [SUBMISSION.md](../../SUBMISSION.md).
