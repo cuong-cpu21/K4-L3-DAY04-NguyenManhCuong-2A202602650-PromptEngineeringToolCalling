@@ -15,7 +15,7 @@
 | Họ và tên | MSSV | GitHub | Vai trò và công việc | File/commit/PR |
 |---|---|---|---|---|
 | Trần Mạnh Tùng | 2A202602879 | Chưa điền | Thiết kế bộ group test mới | `7cad945` |
-| Nguyễn Hồng Thái | 2A202602894 | Chưa điền | Bộ group test ban đầu và UI chat/tool trace | `62c56c4`, PR #1 |
+| Nguyễn Hồng Thái | 2A202602894 | `thaijaor` | UI chat/tool trace, bộ chọn artifact_version, `OPENAI_BASE_URL` cho provider | `62c56c4` (PR #1), `c69b4a4` (PR #2) |
 | Nguyễn Mạnh Cường | 2A202602650 | `cuong-cpu21` | CP2 v0–v3, provider fix, chạy/đọc evidence | `15d6268`, `6452964` |
 
 ## Nhận xét chung
@@ -36,7 +36,6 @@ Sao chép mục này cho từng thành viên.
   - Bộ chọn `artifact_version` trong UI (v0–v3, áp snapshot không cần khởi động lại server, mỗi lần đổi mở phiên mới để một transcript chỉ ứng với một version). Commit `c69b4a4`, PR #2.
   - `starter_v0/providers/openai_provider.py`: đọc `OPENAI_BASE_URL` để chạy được endpoint OpenAI-compatible. Commit `62c56c4`.
   - `README.md`: thêm lệnh chạy UI — `python ui/server.py --provider <provider> --model <model> --version <vN>` rồi mở http://127.0.0.1:8800.
-  - 10 case nhóm `G01`–`G10` (5 đơn lượt, 5 nhiều lượt) trong `starter_v0/data/eval_group.json` (commit `62c56c4`); bản chốt sau đó dùng bộ `GRP01`–`GRP10` của Mạnh Tùng (commit `7cad945`).
 - Quyết định, khó khăn và cách xử lý:
   - Dùng Gemini qua endpoint OpenAI-compatible: thiếu base URL thì request đi tới `api.openai.com` và fail. Cho provider đọc `OPENAI_BASE_URL` từ `.env` thay vì hardcode, đổi nhà cung cấp chỉ cần sửa biến môi trường.
   - Đổi version giữa phiên làm một transcript chứa hai `prompt_hash`, không đối chiếu v0–v3 được. Chốt: đổi version thì bắt buộc mở phiên mới.
